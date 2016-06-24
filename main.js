@@ -1,5 +1,7 @@
 var CreepWorker = require('role.Worker');
 var CreepGuard = require('role.Guard');
+var CreepSentry = require('role.Sentry');
+var CreepTruck = require('role.Truck');
 
 module.exports.loop = function () {
     var tower = Game.getObjectById('id709530');
@@ -9,7 +11,6 @@ module.exports.loop = function () {
         if(closestDamagedStructure) {
             tower.repair(closestDamagedStructure);
         }
-        
         var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         if(closestHostile) {
             tower.attack(closestHostile);
@@ -20,7 +21,6 @@ module.exports.loop = function () {
             delete Memory.creeps[name];
         }
     }
-    
     var Workers = _.filter(Game.creeps, (creep) => creep.memory.role == 'Worker');
     var Trucks = _.filter(Game.creeps, (creep) => creep.memory.role == 'Truck');
     var Guards = _.filter(Game.creeps, (creep) => creep.memory.role == 'Guard');

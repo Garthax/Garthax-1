@@ -10,16 +10,19 @@ var CreepGuard = {
             }
         }
         else {
-            var FlagPosition = creep.room.find(FIND_FLAGS);
-            var Index = creep.memory.Index
+            var PatrolFlags = creep.room.find(FIND_FLAGS);
+            var FlagIndex = creep.memory.Index
             
-            while (creep.pos != FlagPosition[Index].pos) {
-                creep.say("Patrol" + (Index + 1))
-                creep.moveTo(FlagPosition[Index])
-            }
-            
-            if (creep.memory.Index != 3) {
-                creep.memory.Index = (Index + 1)
+            if (creep.memory.Index != (PatrolFlags.length)) {
+                if (creep.pos.isNearTo(PatrolFlags[FlagIndex])) {
+                    FlagIndex = FlagIndex + 1
+                    
+                    creep.memory.Index = FlagIndex
+                    creep.moveTo(PatrolFlags[FlagIndex])
+                }
+                else {
+                    creep.moveTo(PatrolFlags[FlagIndex])
+                }
             }
             else {
                 creep.memory.Index = 0

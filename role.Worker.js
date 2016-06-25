@@ -36,26 +36,46 @@ var CreepWorker = {
         }
         else {
             if (creep.memory.Duty = 1) {
-                if(creep.carry.energy < creep.carryCapacity) {
-                    var sources = creep.room.find(FIND_SOURCES);
+                var creepSrc = creep.memory.SrcSelect
+                
+                if (creepSrc == -1) {
+                    var Sources = creep.room.find(FIND_SOURCES);
+                    var SrcIndex = 0
+                    var MnrIndex = 0
                     
-                    if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(sources[0]);
+                    while (SrcIndex < Sources.length) {
+                        var MnrsThisSrc = _.filter(Game.creeps, (creep) => creep.memory.SrcSelect == (SrcIndex));
+                        
+                        if (MnrsThisSrc.length < 2) {
+                            creep.memory.SrcSelect = SrcIndex
+                            SrcIndex = Sources.length
+                        }
+                        SrcIndex = SrcIndex + 1
                     }
                 }
                 else {
-                    var targets = creep.room.find(FIND_STRUCTURES, {filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_EXTENSION ||
-                                structure.structureType == STRUCTURE_SPAWN ||
-                                structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;}});
-                    
-                    if(targets.length > 0) {
-                        if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(targets[0]);
+                    if((creep.carry.energy < creep.carryCapacity)) {
+                        var sources = creep.room.find(FIND_SOURCES);
+                        var TargetSrc = creep.memory.SrcSelect
+                        
+                        if(creep.harvest(sources[TargetSrc]) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(sources[TargetSrc]);
                         }
                     }
                     else {
-                        creep.memory.Duty = 0
+                        var targets = creep.room.find(FIND_STRUCTURES, {filter: (structure) => {
+                            return (structure.structureType == STRUCTURE_EXTENSION ||
+                                    structure.structureType == STRUCTURE_SPAWN ||
+                                    structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;}});
+                        
+                        if(targets.length > 0) {
+                            if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                                creep.moveTo(targets[0]);
+                            }
+                        }
+                        else {
+                            creep.memory.Duty = 0
+                        }
                     }
                 }
             }

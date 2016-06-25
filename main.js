@@ -29,7 +29,7 @@ module.exports.loop = function () {
     console.log('Workers: ' + Workers.length + ' Trucks: ' + Trucks.length + ' Guards: ' + Guards.length + ' Sentries: ' + Sentries.length);
 
     if((Workers.length < 4) && (Game.spawns.HomeSpawn.energy >= 200)) {
-        var newName = Game.spawns.HomeSpawn.createCreep([WORK,CARRY,MOVE], ('Worker ' + Math.floor((Math.random()*100)+1)), {role: 'Worker',Duty: 0});
+        var newName = Game.spawns.HomeSpawn.createCreep([WORK,CARRY,MOVE], ('Worker ' + Math.floor((Math.random()*100)+1)), {role: 'Worker',Duty: 0,SrcSelect: -1});
         console.log('Spawning new Worker: ' + newName);
     }
     else {
@@ -41,6 +41,12 @@ module.exports.loop = function () {
             if((Sentries.length < 4) && (Game.spawns.HomeSpawn.energy >= 200)) {
                 var newName = Game.spawns.HomeSpawn.createCreep([RANGED_ATTACK,MOVE], ('Sentry ' + Math.floor((Math.random()*100)+1)), {role: 'Sentry',Index: 0});
                 console.log('Spawning new Sentry: ' + newName);
+            }
+            else {
+                if((Workers.length < 10) && (Game.spawns.HomeSpawn.energy >= 200)) {
+                    var newName = Game.spawns.HomeSpawn.createCreep([WORK,CARRY,MOVE], ('Worker ' + Math.floor((Math.random()*100)+1)), {role: 'Worker',Duty: 0,SrcSelect: -1});
+                    console.log('Spawning new Worker: ' + newName);
+                }
             }
         }
     }

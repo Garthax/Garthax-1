@@ -1,11 +1,13 @@
 var CreepWorker = {
     run: function(creep) {
-        if (creep.memory.Duty = 0) {
+        if (creep.memory.Duty === 0) {
+            creep.say("here")
             var Miners = _.filter(Game.creeps, (creep) => creep.memory.Duty == '1');
             var Sources = creep.room.find(FIND_SOURCES);
             
             if (Miners < (Sources.length * 2)) {
-                creep.memory.Duty = 1    
+                creep.memory.Duty = 1
+
             }
             else {
                 var Builders = _.filter(Game.creeps, (creep) => creep.memory.Duty == '2');
@@ -35,32 +37,52 @@ var CreepWorker = {
             }
         }
         else {
-            if (creep.memory.Duty = 1) {
-                if(creep.carry.energy < creep.carryCapacity) {
-                    var sources = creep.room.find(FIND_SOURCES);
+            if (creep.memory.Duty === 1) {
+                var creepSrc = creep.memory.SrcSelect
+                
+                if (creepSrc === -1) {
+                    var Sources = creep.room.find(FIND_SOURCES);
+                    var SrcIndex = 0
+                    var MnrIndex = 0
                     
-                    if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(sources[0]);
+                    while (SrcIndex < Sources.length) {
+                        var MnrsThisSrc = _.filter(Game.creeps, (creep) => creep.memory.SrcSelect == (SrcIndex));
+                        
+                        if (MnrsThisSrc.length < 2) {
+                            creep.memory.SrcSelect = SrcIndex
+                            SrcIndex = Sources.length
+                        }
+                        SrcIndex = SrcIndex + 1
                     }
                 }
                 else {
-                    var targets = creep.room.find(FIND_STRUCTURES, {filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_EXTENSION ||
-                                structure.structureType == STRUCTURE_SPAWN ||
-                                structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;}});
-                    
-                    if(targets.length > 0) {
-                        if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                            creep.moveTo(targets[0]);
+                    if((creep.carry.energy < creep.carryCapacity) && (creep.memory.SrcSelect != -1)) {
+                        var sources = creep.room.find(FIND_SOURCES);
+                        var TargetSrc = creep.memory.SrcSelect
+                        creep.say("here")
+                        if(creep.harvest(sources[TargetSrc]) == ERR_NOT_IN_RANGE) {
+                            creep.moveTo(sources[TargetSrc]);
                         }
                     }
                     else {
-                        creep.memory.Duty = 0
+                        var targets = creep.room.find(FIND_STRUCTURES, {filter: (structure) => {
+                            return (structure.structureType == STRUCTURE_EXTENSION ||
+                                    structure.structureType == STRUCTURE_SPAWN ||
+                                    structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;}});
+                        
+                        if(targets.length > 0) {
+                            if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                                creep.moveTo(targets[0]);
+                            }
+                        }
+                        else {
+                            creep.memory.Duty = 0
+                        }
                     }
                 }
             }
             else {
-                if (creep.memory.Duty = 2) {
+                if (creep.memory.Duty === 2) {
                     if(creep.memory.building && creep.carry.energy == 0) {
                         creep.memory.building = false;
                     }
@@ -87,7 +109,7 @@ var CreepWorker = {
                     }
                 }
                 else {
-                    if (creep.memory.Duty = 3) {
+                    if (creep.memory.Duty === 3) {
                         if(creep.memory.building && creep.carry.energy == 0) {
                             creep.memory.building = false;
                         }
@@ -115,7 +137,7 @@ var CreepWorker = {
                         }
                     }
                     else {
-                        if (creep.memory.Duty = 4) {
+                        if (creep.memory.Duty === 4) {
                             if(creep.memory.building && creep.carry.energy == 0) {
                                 creep.memory.building = false;
                             }

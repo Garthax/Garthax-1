@@ -34,12 +34,12 @@ module.exports.loop = function () {
     }
     else {
         if((Guards.length < 4) && (Game.spawns.HomeSpawn.energy >= 200)) {
-            var newName = Game.spawns.HomeSpawn.createCreep([ATTACK,MOVE], ('Guard ' + Math.floor((Math.random()*100)+1)), {role: 'Guard',Index: 0});
+            var newName = Game.spawns.HomeSpawn.createCreep([TOUGH,ATTACK,MOVE], ('Guard ' + Math.floor((Math.random()*100)+1)), {role: 'Guard',Index: 0});
             console.log('Spawning new Guard: ' + newName);
         }
         else {
-            if((Sentries.length < 4) && (Game.spawns.HomeSpawn.energy >= 200)) {
-                var newName = Game.spawns.HomeSpawn.createCreep([RANGED_ATTACK,MOVE], ('Sentry ' + Math.floor((Math.random()*100)+1)), {role: 'Sentry',Index: 0});
+            if((Sentries.length < 4) && (Game.spawns.HomeSpawn.energy >= 210)) {
+                var newName = Game.spawns.HomeSpawn.createCreep([TOUGH,RANGED_ATTACK,MOVE], ('Sentry ' + Math.floor((Math.random()*100)+1)), {role: 'Sentry',Index: 0});
                 console.log('Spawning new Sentry: ' + newName);
             }
             else {
@@ -48,6 +48,12 @@ module.exports.loop = function () {
                     console.log('Spawning new Worker: ' + newName);
                 }
             }
+        }
+    }
+    var ExhaustedCreeps = _.filter(Game.creeps, (creep) => creep.ticksToLive < 100)
+    if (ExhaustedCreeps.length != 0) {
+        for (var name in ExhaustedCreeps) {
+            Game.spawns.HomeSpawn.renewCreep(ExhaustedCreeps[name])
         }
     }
     for(var name in Game.creeps) {
